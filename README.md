@@ -1,28 +1,20 @@
-The content below is an example project proposal / requirements document. Replace the text below the lines marked "__TODO__" with details specific to your project. Remove the "TODO" lines.
+# Stocklist*
 
-(___TODO__: your project name_)
-
-# Shoppy Shoperson 
+*subject to change
 
 ## Overview
 
-(___TODO__: a brief one or two paragraph, high-level description of your project_)
+Interesting in purchasing stocks, but can't keep track of what to buy? Stocklist is a web app allowing multiple users to search the entire NYSE/NASDAQ/AMEX for stocks and add them to your watchlist. For each stock, It reveals informaiton about the company, such as market cap, general description, price to earnings ratio. (maybe graph/charting)
 
-Remembering what to buy at the grocery store is waaaaay too difficult. Also, shopping for groceries when you're hungry leads to regrettable purchases. Sooo... that's where Shoppy Shoperson comes in!
-
-Shoppy Shoperson is a web app that will allow users to keep track of multiple grocery lists. Users can register and login. Once they're logged in, they can create or view their grocery list. For every list that they have, they can add items to the list or cross off items.
+It records what the price was when you added the stock, and tells you how much it went up/down from when you added it to the current time. This tests your stockpicking skills and tells you if you make the right decision or not overtime. 
 
 
 ## Data Model
 
-(___TODO__: a description of your application's data and their relationships to each other_) 
+The application will store lists, stocks with it's respective content
 
-The application will store Users, Lists and Items
-
-* users can have multiple lists (via references)
-* each list can have multiple items (by embedding)
-
-(___TODO__: sample documents_)
+* users can have multiple watchlists (via references)
+* each watchlist can have multiple stocks containing information about the company (by embedding)
 
 An Example User:
 
@@ -39,10 +31,9 @@ An Example List with Embedded Items:
 ```javascript
 {
   user: // a reference to a User object
-  name: "Breakfast foods",
+  name: "High risk stocks",
   items: [
-    { name: "pancakes", quantity: "9876", checked: false},
-    { name: "ramen", quantity: "2", checked: true},
+    { ticker: "CAKE", company: "The Cheesecake Factory", price_when_added: "24.20", price_now: "11.12", description: "The Cheesecake Factory Incorporated is an American restaurant company and distributor of cheesecakes based in the United States"},
   ],
   createdAt: // timestamp
 }
@@ -51,7 +42,32 @@ An Example List with Embedded Items:
 
 ## [Link to Commented First Draft Schema](db.js) 
 
-(___TODO__: create a first draft of your Schemas in db.js and link to it_)
+```javascript
+const User = new mongoose.Schema({
+  	// store user information
+    username: String,
+    password: String,
+  	// watchlist will contain a list of seperate lists of stocks
+    watchlists: [Watchlist]
+});
+
+const Watchlist = new mongoose.Schema({
+  	// name of the watch list as well as an array of all the stocks being stored by the user in that watchlist
+    name: String,
+    stocks: [Stock]
+});
+
+const Stock = new mongoose.Schema({
+  	// all relevant information about the company
+    ticker: String,
+  	name: String,
+    priceAdded: Number,
+  	// PriceNow would have to be computed in realtime each time user accesses it
+    priceNow: Number,
+    change: Number,
+    description: String
+});
+```
 
 ## Wireframes
 
