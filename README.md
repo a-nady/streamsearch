@@ -1,20 +1,18 @@
-# Stocklist*
+StreamList*
 
 *subject to change
 
 ## Overview
 
-Interesting in purchasing stocks, but can't keep track of what to buy? Stocklist is a web app allowing multiple users to search the entire NYSE/NASDAQ/AMEX for stocks and add them to your watchlist. For each stock, It reveals informaiton about the company, such as market cap, general description, price to earnings ratio. (maybe graph/charting)
-
-It records what the price was when you added the stock, and tells you how much it went up/down from when you added it to the current time. This tests your stockpicking skills and tells you if you make the right decision or not overtime. 
+Sometimes, you want to watch a film/tv show, but because of the many streaming services nowadays, it can get confusing on where exactly you can watch it. This web app will allow the user to easily find out where each of the shows they want to watch belongs to what most popular streaming services (Netflix, Disney+, Hulu, TBD). They can make multiple watchlists, and within those watchlists can contain content from different streaming services, and also mark whether they watched it yet or not, allowing the user to keep track of what they want to watch instead of slowly going through each streaming service app.
 
 
 ## Data Model
 
-The application will store lists, stocks with it's respective content
+The application will store watchlists, and with the watchlist containing information like streaming service it's available on (can be multiple), title, date released, etc..
 
 * users can have multiple watchlists (via references)
-* each watchlist can have multiple stocks containing information about the company (by embedding)
+* each watchlist can have multiple films/tvs with containing information about the movie(not sure if possible yet)
 
 An Example User:
 
@@ -31,9 +29,9 @@ An Example List with Embedded Items:
 ```javascript
 {
   user: // a reference to a User object
-  name: "High risk stocks",
+  name: "Nostalgic Movies",
   items: [
-    { ticker: "CAKE", company: "The Cheesecake Factory", price_when_added: "24.20", price_now: "11.12", description: "The Cheesecake Factory Incorporated is an American restaurant company and distributor of cheesecakes based in the United States"},
+    { title: "The Lion King", streaming_service: "Disney+", date_released: 1994, description: "Lion prince Simba and his father are targeted by his bitter uncle, who wants to ascend the throne himself."},
   ],
   createdAt: // timestamp
 }
@@ -47,49 +45,41 @@ const User = new mongoose.Schema({
   	// store user information
     username: String,
     password: String,
-  	// watchlist will contain a list of seperate lists of stocks
+  	// watchlist will contain a list of seperate lists of movies/tv
     watchlists: [Watchlist]
 });
 
 const Watchlist = new mongoose.Schema({
-  	// name of the watch list as well as an array of all the stocks being stored by the user in that watchlist
+  	// name of the watch list as well as an array of all the content being stored by the user in that watchlist
     name: String,
-    stocks: [Stock]
+    movies: [Movie]
 });
 
-const Stock = new mongoose.Schema({
-  	// all relevant information about the company
-    ticker: String,
-  	name: String,
-    priceAdded: Number,
-  	// PriceNow would have to be computed in realtime each time user accesses it
-    priceNow: Number,
-    change: Number,
-    description: String
+const Movie = new mongoose.Schema({
+  	// title of the movie
+    title: String,
+  	// since some content is on multiple services, schematype should be an array here
+  	service: [String],
+    dateReleased: Number,
+    description: String,
+  	// if user watched it or not
+  	watched: Boolean
 });
 ```
 
 ## Wireframes
 
-(___TODO__: wireframes for all of the pages on your site; they can be as simple as photos of drawings or you can use a tool like Balsamiq, Omnigraffle, etc._)
+/- home page showing all watchlists for the user as well as the ability to create a new watchlist (I want to see if i could maybe parse an image from one of the titles or multiple titles within the watchlist to display on the watchlist instead of the generic images shown below)
 
-/list/create - page for creating a new shopping list
+![list create](documentation/index.png)
 
-![list create](documentation/list-create.png)
-
-/list - page for showing all shopping lists
+/list - page for showing all content in watchlist, maybe another page showing more information about the tv/movie's if selected on
 
 ![list](documentation/list.png)
 
-/list/slug - page for showing specific shopping list
-
-![list](documentation/list-slug.png)
-
 ## Site map
 
-(___TODO__: draw out a site map that shows how pages are related to each other_)
-
-Here's a [complex example from wikipedia](https://upload.wikimedia.org/wikipedia/commons/2/20/Sitemap_google.jpg), but you can create one without the screenshots, drop shadows, etc. ... just names of pages and where they flow to.
+![list](documentation/sitemap.png)
 
 ## User Stories or Use Cases
 
@@ -97,37 +87,38 @@ Here's a [complex example from wikipedia](https://upload.wikimedia.org/wikipedia
 
 1. as non-registered user, I can register a new account with the site
 2. as a user, I can log in to the site
-3. as a user, I can create a new grocery list
-4. as a user, I can view all of the grocery lists I've created in a single list
-5. as a user, I can add items to an existing grocery list
-6. as a user, I can cross off items in an existing grocery list
+3. as a user, I can create a watchlist
+4. as a user, I can view all of the content I've added in a single list
+5. as a user, I can add content to an existing watchlist
+6. as a user, I can remove content off a watchlist
+7. as a user, I can remove a watchlist
+8. as a user, i can select any content within the list to see more information about it.
 
 ## Research Topics
 
 (___TODO__: the research topics that you're planning on working on along with their point values... and the total points of research topics listed_)
 
-* (5 points) Integrate user authentication
-    * I'm going to be using passport for user authentication
-    * And account has been made for testing; I'll email you the password
-    * see <code>cs.nyu.edu/~jversoza/ait-final/register</code> for register page
-    * see <code>cs.nyu.edu/~jversoza/ait-final/login</code> for login page
-* (4 points) Perform client side form validation using a JavaScript library
-    * see <code>cs.nyu.edu/~jversoza/ait-final/my-form</code>
-    * if you put in a number that's greater than 5, an error message will appear in the dom
-* (5 points) vue.js
-    * used vue.js as the frontend framework; it's a challenging library to learn, so I've assigned it 5 points
+* (5 points) react.js
+    * There are not many dynamic elements i could think of in this project so far, but it may improve how the UI looks and modernization.
+    * For example, when viewing the list of content, instead of going to a new page, I could use the virtual DOM to expand and show information about a specific movie/film.
+* (2 points) Bootstrap:
+    * To be used along with react.
+* (3 points) The several APIs needed to scrape content from all the services:
+    * https://api.watchmode.com
+    * There are several ways I could go about this:
+        * When user enters the title, the server could make an API call each time seeing if the title exists anywhere.
+        * Or when the server starts, perform API calls asking for all shows/movies from everywhere and create a database containing all the titles from all the services (or maybe just every 24 hours as the content is likely to stay the same). Then when user searches, it just does .find on the database. This is probably much faster as all the data is cached on the server and no API calls to external servers have to be made when user searches for anything
+        * (this API also has limited amount of calls on a free acount).
+            * This method would also doesn't need exact matching if it searches the database.
+* (1 points) Imdb-api to use for descriptions:
+    * https://www.npmjs.com/package/imdb-api
 
-10 points total out of 8 required points (___TODO__: addtional points will __not__ count for extra credit_)
+
+
+9 points total out of 8 required points
 
 
 ## [Link to Initial Main Project File](app.js) 
 
-(___TODO__: create a skeleton Express application with a package.json, app.js, views folder, etc. ... and link to your initial app.js_)
-
 ## Annotations / References Used
-
-(___TODO__: list any tutorials/references/etc. that you've based your code off of_)
-
-1. [passport.js authentication docs](http://passportjs.org/docs) - (add link to source code that was based on this)
-2. [tutorial on vue.js](https://vuejs.org/v2/guide/) - (add link to source code that was based on this)
 
