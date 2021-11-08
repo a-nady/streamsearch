@@ -4,6 +4,7 @@ const express = require("express");
 const path = require("path")
 
 const app = express();
+const uri = process.env.MONGODB_URI;
 //const Movie = mongoose.model("User");
 app.set('view engine', 'hbs');
 app.set("views", path.join(__dirname, "/views"));
