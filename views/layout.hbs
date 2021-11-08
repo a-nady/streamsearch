@@ -1,5 +1,69 @@
-<!DOCTYPE html>
+<!doctype html>
+<html>
 <head>
-    <title>Final Project</title>
-    <h1>Final Project</h1>
+<meta charset="utf-8">
+<title>StreamList</title>
 </head>
+<body>
+
+<link href="https://fonts.googleapis.com/css?family=Quicksand:300,500" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Archivo:500|Open+Sans:300,700" rel="stylesheet">
+<style>
+
+h1 {
+	text-align: center;
+}
+
+body {
+	height: 100vh;
+	font-family: 'Quicksand', 'Open Sans', Garamond, sans-serif;
+	font-size: 1em;
+	background-color: #222;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+h1, h2, h3, h4, h5, h6 {
+ 	font-family: 'Archivo', Garamond,sans-serif;
+ 	font-weight: 500;
+}
+
+#outer {
+	width: 400px;
+	height: 500px;
+	padding: 0em 2em 1em 2em;
+	background-color: #fff;
+}
+
+.note {
+	color:#888; 
+	padding-top: 1em;
+}
+
+.error {
+	background-color: #eecccc;
+	padding: 0.25em;
+}
+
+.success {
+	background-color: #cceecc;
+	padding: 0.25em;
+}
+
+form div {
+	padding-bottom: 0.5em;
+}
+</style>
+
+<div id="outer">
+{{{ body }}}
+Placeholder outer
+{{#if home}}
+{{else}}
+<div class="note"> Placeholder note</div>
+{{/if}}
+</div>
+
+</body>
+</html>
