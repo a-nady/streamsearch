@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-
-
 const Movie = new mongoose.Schema({
   	// title of the movie
     title: String,
@@ -27,9 +25,7 @@ const User = new mongoose.Schema({
     watchlists: [Watchlist]
 });
 
-
-
-
 mongoose.model('User', User);
 mongoose.model('Watchlist', Watchlist);
 mongoose.model('Movie', Movie);
+mongoose.connect('mongodb://localhost/contentdb');

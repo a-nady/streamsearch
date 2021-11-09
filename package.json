@@ -19,10 +19,14 @@
   "homepage": "https://github.com/nyu-csci-ua-0467-001-fall-2021/a-nady-final-project#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "connect-ensure-login": "^0.1.1",
     "express": "^4.17.1",
     "express-handlebars": "^5.3.4",
+    "express-session": "^1.17.2",
     "hbs": "^4.1.2",
-    "mongoose": "^6.0.12"
+    "mongoose": "^6.0.12",
+    "passport": "^0.5.0",
+    "passport-local": "^1.0.0"
   },
   "engines": {
     "node": "16.12.0"
