@@ -13,10 +13,9 @@ const Watchlist = mongoose.model("Watchlist");
 const Movie = mongoose.model("Movie");
 const uri = process.env.MONGODB_URI;
 
- try {
-     mongoose.connect(uri);
- }
- catch (err) {
+if (uri !== undefined) {
+    mongoose.connect(uri);
+} else {
      // for local use
      mongoose.connect('mongodb://127.0.0.1/contentdb')
  }
