@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const passportLocalMongoose = require("passport-local-mongoose");
 
 const Movie = new mongoose.Schema({
   	// title of the movie
@@ -25,7 +26,11 @@ const User = new mongoose.Schema({
     watchlists: [Watchlist]
 });
 
+User.plugin(passportLocalMongoose);
+
 mongoose.model('User', User);
 mongoose.model('Watchlist', Watchlist);
 mongoose.model('Movie', Movie);
-mongoose.connect('mongodb://localhost/contentdb');
+//mongoose.connect('mongodb://localhost/contentdb');
+mongoose.connect('mongodb://127.0.0.1/contentdb')
+

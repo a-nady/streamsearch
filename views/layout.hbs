@@ -8,6 +8,7 @@
 
 <link href="https://fonts.googleapis.com/css?family=Quicksand:300,500" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Archivo:500|Open+Sans:300,700" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <style>
 
 h1 {
@@ -30,8 +31,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #outer {
-	width: 400px;
-	height: 500px;
+	width: 90%;
+	height: 90%;
 	padding: 0em 2em 1em 2em;
 	background-color: #fff;
 }
@@ -54,15 +55,28 @@ h1, h2, h3, h4, h5, h6 {
 form div {
 	padding-bottom: 0.5em;
 }
+
 </style>
 
 <div id="outer">
-{{{ body }}}
-Placeholder outer
-{{#if home}}
-{{else}}
+    <nav class="navbar navbar-inverse">
+        <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+            {{#if user}}
+            <li><a href="/logout">Logout</a></li>
+            {{/if}}
+        </ul>
+    </nav>
+
+    {{#if error}}
+        <div class="error">
+            {{ error }}
+        </div>
+    {{/if}}
+    {{{ body }}}
+
 <div class="note"> Placeholder note</div>
-{{/if}}
+
 </div>
 
 </body>
