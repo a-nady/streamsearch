@@ -32,5 +32,5 @@ mongoose.model('User', User);
 mongoose.model('Watchlist', Watchlist);
 mongoose.model('Movie', Movie);
 //mongoose.connect('mongodb://localhost/contentdb');
-mongoose.connect('mongodb://127.0.0.1/contentdb')
+//mongoose.connect('mongodb://127.0.0.1/contentdb')
 

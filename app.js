@@ -1,7 +1,6 @@
 require("./db.js");
 const ensure = require('connect-ensure-login');
 const mongoose = require("mongoose");
-const uri = process.env.MONGODB_URI;
 const express = require("express");
 const session = require('express-session')
 const path = require("path");
@@ -12,6 +11,15 @@ const bodyParser = require('body-parser');
 const User = mongoose.model("User");
 const Watchlist = mongoose.model("Watchlist");
 const Movie = mongoose.model("Movie");
+const uri = process.env.MONGODB_URI;
+
+ try {
+     mongoose.connect(uri);
+ }
+ catch (err) {
+     // for local use
+     mongoose.connect('mongodb://127.0.0.1/contentdb')
+ }
 
 app.use(session({
     secret: 'cryingemoji',
@@ -118,7 +126,6 @@ app.post('/login', passport.authenticate('local', { failureRedirect: '/errlogin'
 });
 
 app.post("/dashboard", function(req, res) {
-
     watchlist = req.body.watchlist;
     if (watchlist.length === 0) {
         return res.redirect('/dashboard');
@@ -154,7 +161,7 @@ const port = process.env.PORT || 3000;
 //    console.log('removed')
 //});
 
-app.listen( port, () => {
-    console.log( `Server started on port ${ port }.` );
-} );
+app.listen(port, () => {
+    console.log( `Server started on port ${port}.` );
+});
 
