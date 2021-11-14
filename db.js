@@ -14,16 +14,20 @@ const Movie = new mongoose.Schema({
 
 const Watchlist = new mongoose.Schema({
   	// name of the watch list as well as an array of all the content being stored by the user in that watchlist
+    user : String,
     name: String,
     movies: [Movie]
-});
+    },
+    {
+        timestamps: true
+    });
 
 const User = new mongoose.Schema({
   	// store user information
     username: String,
     password: String,
+    watchlists: [Watchlist],
   	// watchlist will contain a list of seperate lists of movies/tv
-    watchlists: [Watchlist]
 });
 
 User.plugin(passportLocalMongoose);

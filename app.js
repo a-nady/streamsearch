@@ -17,7 +17,9 @@ if (uri !== undefined) {
     mongoose.connect(uri);
 } else {
      // for local use
-     mongoose.connect('mongodb://127.0.0.1/contentdb')
+     mongoose.connect('mongodb://127.0.0.1/contentdb', function() {
+         //mongoose.connection.db.dropDatabase();
+     })
  }
 
 app.use(session({
@@ -35,10 +37,13 @@ app.set('view engine', 'hbs');
 app.set("views", path.join(__dirname, "/views"));
 
 passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(function(user, done) { done(null, user); });
+passport.deserializeUser(function(obj, done) { done(null, obj); });
 
-let errorMessage = ''
+//passport.serializeUser(User.serializeUser());
+//passport.deserializeUser(User.deserializeUser());
+
+let errorFlag = ''
 
 app.get("/", (req, res) => {
     if (req.user) {
@@ -52,17 +57,17 @@ app.get("/login", (req, res) => {
     if (req.user) {
         res.redirect('/dashboard')
     } else {
-        if (errorMessage === '') {
+        if (errorFlag === '') {
             res.render('login');
         } else {
-            res.render('login', {error: errorMessage});
-            errorMessage = '';
+            res.render('login', {error: errorFlag});
+            errorFlag = '';
         }
     }
 });
 
 app.get("/errlogin", (req, res) => {
-    errorMessage = 'Invalid username or password.';
+    errorFlag = 'Invalid username or password.';
     res.redirect('/login')
 });
 
@@ -75,17 +80,20 @@ app.get("/register", (req, res) => {
 });
 
 app.get('/dashboard', ensure.ensureLoggedIn(), (req, res) => {
-    if (errorMessage === '') {
-        res.render('dashboard', {user:1});
-    } else {
-        res.render('dashboard', {user:1, error:errorMessage});
-        errorMessage = '';
-    }
+    //console.log(req.session.passport.user)
 
-    User.find(function (err, db) {
-        if (err) return console.error(err);
-        console.dir(db);
+
+
+    Watchlist.find({user : req.session.passport.user.username}, function (err, watch) {
+        console.log(watch)
+        res.render('dashboard', {user:1, error:errorFlag, list : watch});
+        errorFlag = '';
     });
+
+    //User.find(function (err, db) {
+    //    if (err) return console.error(err);
+    //    console.dir(db);
+    //});
 });
 
 app.get("/logout", function(req, res){
@@ -109,6 +117,7 @@ app.post("/register", function(req, res) {
                 if ('UserExistsError' === err.name) {
                     str = 'Username already in use.';
                 }
+
                 return res.render("register", {error : str});
             }
             passport.authenticate("local")(req, res, function(){
@@ -120,7 +129,6 @@ app.post("/register", function(req, res) {
 });
 
 app.post('/login', passport.authenticate('local', { failureRedirect: '/errlogin' }),  function(req, res) {
-	console.log(req.user)
 	res.redirect('/dashboard');
 });
 
@@ -131,23 +139,34 @@ app.post("/dashboard", function(req, res) {
     }
     let found = false;
     Watchlist.findOne({
+        user: req.session.passport.user.username,
         name: watchlist
     }, function (err, exists) {
         if (err) {
             console.log(err)
         }
         if (exists) {
-            res.render('dashboard', {error: 'Duplicate watchlist.'});
+            errorFlag = 'Duplicate watchlist.'
+            res.redirect('/dashboard')
         } else {
             new Watchlist({
+                user: req.session.passport.user.username,
                 name: watchlist,
                 movies: []
-            }).save(function (err, movie) {
+            }).save(function (err, newlist) {
+
                 if (err) {
                     console.log(err);
                 }
-                console.log('yes')
-                // console.log(movie);
+                req.session.passport.user.watchlists.push(newlist);
+
+                User.findOneAndUpdate({ user : req.session.passport.user.username }, { $set: {
+                    watchlists : req.session.passport.user.watchlists } }, { new: true }, function(err, doc) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    //console.log(doc)
+                });
                 res.redirect('/dashboard');
             });
         }
@@ -156,9 +175,25 @@ app.post("/dashboard", function(req, res) {
 
 const port = process.env.PORT || 3000;
 
+
 //User.remove({}, function(err) {
 //    console.log('removed')
 //});
+
+//Watchlist.remove({}, function(err) {
+//    console.log('removed')
+//});
+
+//User.remove({}, function(err) {
+//    console.log('removed')
+//});
+
+
+function iterate(id) {
+    i = 0
+
+}
+
 
 app.listen(port, () => {
     console.log( `Server started on port ${port}.` );
