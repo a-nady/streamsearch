@@ -1,4 +1,4 @@
-<h1>Watchlists</h1>
+
 
 <style>
 form {
@@ -41,28 +41,31 @@ form {
 
 </style>
 
-<form action="/dashboard" method="post">
+<form action="/dashboard/:wlist" method="post">
     <div>
-        <label>Create Watchlist</label>
-        <input type="text" name="watchlist"/>
+        <label>Search for a Movie</label>
+        <input type="text" name="query"/>
     </div>
     <div>
-        <input type="submit" value="Create"/>
+        <input type="submit" value="Search"/>
     </div>
 </form>
 
 
 <table class="tftable" border="1">
     <tr>
-        <th>Watchlist</th>
-        <th>Created at</th>
-        <th>Updated at</th>
+        <th>Title</th>
+        <th>Year of Release</th>
+        <th>Available at</th>
     </tr>
     {{#each list}}
         <tr>
-            <td><a href="/dashboard/{{this.name}}">{{this.name}}</a></td>
-            <td>{{this.createdAt}}</td>
-            <td>{{this.updatedAt}}</td>
+            <td>{{this.title}}</td>
+            <td>{{this.release}}</td>
+            <td>
+            {{#each this.services}}
+                <li>{{this}}</li>
+            {{/each}}</td>
         </tr>
     {{/each}}
 

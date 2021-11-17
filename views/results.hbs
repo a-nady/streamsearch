@@ -1,4 +1,4 @@
-<h1>Watchlists</h1>
+
 
 <style>
 form {
@@ -41,28 +41,23 @@ form {
 
 </style>
 
-<form action="/dashboard" method="post">
-    <div>
-        <label>Create Watchlist</label>
-        <input type="text" name="watchlist"/>
-    </div>
-    <div>
-        <input type="submit" value="Create"/>
-    </div>
-</form>
 
 
 <table class="tftable" border="1">
     <tr>
-        <th>Watchlist</th>
-        <th>Created at</th>
-        <th>Updated at</th>
+        <th>Title</th>
+        <th>Year of Release</th>
+        <th>Available at</th>
     </tr>
     {{#each list}}
         <tr>
-            <td><a href="/dashboard/{{this.name}}">{{this.name}}</a></td>
-            <td>{{this.createdAt}}</td>
-            <td>{{this.updatedAt}}</td>
+            <td>{{this.title}}</td>
+            <td>{{this.release}}</td>
+            <td>
+            {{#each this.services}}
+                <li>{{this}}</li>
+            {{/each}}</td>
+            <td><a href="/dashboard/add/{{this.index}}">Add</td>
         </tr>
     {{/each}}
 

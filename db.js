@@ -2,14 +2,13 @@ const mongoose = require('mongoose');
 const passportLocalMongoose = require("passport-local-mongoose");
 
 const Movie = new mongoose.Schema({
-  	// title of the movie
-    id: String,
+    wl_id: String,
+    id: Number,
     title: String,
-  	// since some content is on multiple services, schematype should be an array here
-    service: [String],
-    released: Number,
+    type: String,
+    services: [String],
+    release: Number,
     description: String,
-  	// if user watched it or not
     watched: Boolean
 });
 
