@@ -79,21 +79,32 @@ app.get("/register", (req, res) => {
     }
 });
 
-app.get('/dashboard', ensure.ensureLoggedIn(), (req, res) => {
+app.get('/dashboard', ensure.ensureLoggedIn(), function(req, res){
     //console.log(req.session.passport.user)
-
-
-
     Watchlist.find({user : req.session.passport.user.username}, function (err, watch) {
         console.log(watch)
         res.render('dashboard', {user:1, error:errorFlag, list : watch});
         errorFlag = '';
     });
+});
 
-    //User.find(function (err, db) {
-    //    if (err) return console.error(err);
-    //    console.dir(db);
-    //});
+app.get('/dashboard/:wlist', ensure.ensureLoggedIn(), function(req, res){
+    Watchlist.findOne({user : req.session.passport.user.username, name : req.params.wlist}, function (err, watch) {
+        if (err) {
+            console.log(err)
+            errorFlag = 'An error occured'
+            return res.redirect("/dashboard")
+        }
+        Movie.find({id:watch._id}, function(err, watch) {
+            if (err) {
+                console.log(err)
+                errorFlag = 'An error occured'
+                return res.redirect("/dashboard")
+            }
+            res.render('movies', {user: 1, error: errorFlag, list: watch});
+            errorFlag = '';
+        })
+    })
 });
 
 app.get("/logout", function(req, res){
@@ -132,8 +143,9 @@ app.post('/login', passport.authenticate('local', { failureRedirect: '/errlogin'
 	res.redirect('/dashboard');
 });
 
+
 app.post("/dashboard", function(req, res) {
-    watchlist = req.body.watchlist;
+    let watchlist = req.body.watchlist;
     if (watchlist.length === 0) {
         return res.redirect('/dashboard');
     }
@@ -172,29 +184,55 @@ app.post("/dashboard", function(req, res) {
         }
     })
 });
+/*
+app.post('/dashboard/:wlist', function(req, res){
+    let wlist = req.params.wlist
+    let mov = req.body.movie
+    Watchlist.findOne({user : req.session.passport.user.username, name : wlist}, function (err, watch) {
+        if (err) {
+            console.log(err)
+            errorFlag = 'An error occured'
+            return res.redirect("/dashboard")
+        }
+        Movie.findOne({id:watch._id}, function (err, exists) {
+            if (err) {
+                console.log(err)
+                errorFlag = 'An error occured'
+                return res.redirect("/dashboard")
+            } if (exists) {
+
+            }
+        }
+            res.render('movies', {user: 1, error: errorFlag, list: watch});
+            errorFlag = '';
+        })
+    })
+
+ */
+app.post('/dashboard/:wlist', function(req, res){
+    let wlist = req.params.wlist
+    let mov = req.body.movie
+    Watchlist.findOne({user : req.session.passport.user.username, name : wlist}, function (err, watch) {
+        if (err) {
+            console.log(err)
+            errorFlag = 'An error occured'
+            return res.redirect("/dashboard")
+        }
+        Movie.findOne({id:watch._id}, function (err, exists) {
+            if (err) {
+                console.log(err)
+                errorFlag = 'An error occured'
+                return res.redirect("/dashboard")
+            } if (exists) {
+
+            }
+        })
+        res.render('movies', {user: 1, error: errorFlag, list: watch});
+        errorFlag = '';
+    })
+})
 
 const port = process.env.PORT || 3000;
-
-
-//User.remove({}, function(err) {
-//    console.log('removed')
-//});
-
-//Watchlist.remove({}, function(err) {
-//    console.log('removed')
-//});
-
-//User.remove({}, function(err) {
-//    console.log('removed')
-//});
-
-
-function iterate(id) {
-    i = 0
-
-}
-
-
 app.listen(port, () => {
     console.log( `Server started on port ${port}.` );
 });
