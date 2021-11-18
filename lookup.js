@@ -52,8 +52,8 @@ const search = async function(query){
 };
 
 // get description
-const getDesc = async function(type, showInfo) {
-    return await jw.getTitle('show', 21546).then(res => res.short_description);
+const getDesc = async function(type, id) {
+    return await jw.getTitle(type, id).then(res => res.short_description);
 }
 
 //search()

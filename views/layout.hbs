@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css?family=Quicksand:300,500" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Archivo:500|Open+Sans:300,700" rel="stylesheet">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
 <style>
 
 h1 {
@@ -73,9 +74,13 @@ form div {
             {{ error }}
         </div>
     {{/if}}
+    {{#if success}}
+        <div class="success">
+            {{ success }}
+        </div>
+    {{/if}}
     {{{ body }}}
-
-<div class="note"> Placeholder note</div>
+    
 
 </div>
 

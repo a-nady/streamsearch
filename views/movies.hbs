@@ -37,9 +37,10 @@ form {
     border-style: solid;
     border-color: #a9a9a9;
 }
-
-
 </style>
+{{#if wlistName}}
+    <h1>{{ wlistName}} Watchlist</h1>
+{{/if}}
 
 <form action="/dashboard/:wlist" method="post">
     <div>
@@ -56,12 +57,16 @@ form {
     <tr>
         <th>Title</th>
         <th>Year of Release</th>
+        <td>Type of Content</td>
+        <td>Description</td>
         <th>Available at</th>
     </tr>
     {{#each list}}
         <tr>
             <td>{{this.title}}</td>
             <td>{{this.release}}</td>
+            <td>{{this.type}}</td>
+            <td>{{this.description}}</td>
             <td>
             {{#each this.services}}
                 <li>{{this}}</li>

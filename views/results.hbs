@@ -47,12 +47,15 @@ form {
     <tr>
         <th>Title</th>
         <th>Year of Release</th>
+        <th>Type of Content</th>
         <th>Available at</th>
+        <th>Add to Current Watchlist?</th>
     </tr>
     {{#each list}}
         <tr>
             <td>{{this.title}}</td>
             <td>{{this.release}}</td>
+            <td>{{this.type}}</td>
             <td>
             {{#each this.services}}
                 <li>{{this}}</li>
