@@ -1,18 +1,16 @@
 StreamList*
 
-*subject to change
-
 ## Overview
 
-Sometimes, you want to watch a film/tv show, but because of the many streaming services nowadays, it can get confusing on where exactly you can watch it. This web app will allow the user to easily find out where each of the shows they want to watch belongs to what most popular streaming services (Netflix, Disney+, Hulu, TBD). They can make multiple watchlists, and within those watchlists can contain content from different streaming services, and also mark whether they watched it yet or not, allowing the user to keep track of what they want to watch instead of slowly going through each streaming service app.
+Sometimes, you want to watch a film/tv show, but because of the many streaming services nowadays, it can get confusing on where exactly you can watch it. This web app will allow the user to easily find out where each of the shows they want to watch belongs to what most popular streaming services (Netflix, Disney+, Hulu, TBD). They can make multiple watchlists, and within those watchlists can contain content from different streaming services, allowing the user to keep track of what they want to watch instead of slowly going through each streaming service app to look for what they've wanted to watch.
 
 
 ## Data Model
 
-The application will store watchlists, and with the watchlist containing information like streaming service it's available on (can be multiple), title, date released, etc..
+The application will store users secured with Passport JS middleware, with each user able to hold multiple watchlists, and with each watchlist containing information like streaming service it's available on (can be multiple), title, date released, and description.
 
 * users can have multiple watchlists (via references)
-* each watchlist can have multiple films/tvs with containing information about the movie(not sure if possible yet)
+* each watchlist can have multiple films/tvs with containing information about the movie
 
 An Example User:
 
@@ -20,7 +18,7 @@ An Example User:
 {
   username: "shannonshopper",
   hash: // a password hash,
-  lists: // an array of references to List documents
+  watchlists: // an array of references to List documents
 }
 ```
 
@@ -30,8 +28,8 @@ An Example List with Embedded Items:
 {
   user: // a reference to a User object
   name: "Nostalgic Movies",
-  items: [
-    { title: "The Lion King", streaming_service: "Disney+", date_released: 1994, description: "Lion prince Simba and his father are targeted by his bitter uncle, who wants to ascend the throne himself."},
+  movies: [{
+    { title: "The Lion King", type: "Movie", services: "Disney Plus", year_released: 1994, description: "Simba idolizes his father, King Mufasa, and takes to heart his own royal destiny. But not everyone in the kingdom celebrates the new cub's arrival. Scar, Mufasa's brother—and former heir to the throne—has plans of his own."},
   ],
   createdAt: // timestamp
 }
@@ -41,30 +39,48 @@ An Example List with Embedded Items:
 ## [Link to Commented First Draft Schema](db.js) 
 
 ```javascript
-const User = new mongoose.Schema({
-  	// store user information
-    username: String,
-    password: String,
-  	// watchlist will contain a list of seperate lists of movies/tv
-    watchlists: [Watchlist]
+const Movie = new mongoose.Schema({
+  	// the id of the watchlist of where exactly the movie belongs to
+  // helpful for finding all the movies from a specific watchlist
+    wl_id: String,
+  // id used to retrieve description of movie and other details from API
+    id: Number,
+  // title of the Content
+    title: String,
+  // whether its a show or movie
+    type: String,
+  // where the content is available it, can be 1 or multiple 
+    services: [String],
+  // year of original release
+    release: Number,
+  // short description of the content
+    description: String,
+  // pending on if this will be implemented, mark whether its watched or not
+    watched: Boolean
 });
 
 const Watchlist = new mongoose.Schema({
-  	// name of the watch list as well as an array of all the content being stored by the user in that watchlist
+  // the username of where the watchlist belongs too
+  // helpful for retrieving all watchlists from one users
+    user : String,
+  // what the watchlist is named
     name: String,
+  // all the movies within the watchlist, will be an array of documents
     movies: [Movie]
-});
+    },
+    {
+        timestamps: true
+    });
 
-const Movie = new mongoose.Schema({
-  	// title of the movie
-    title: String,
-  	// since some content is on multiple services, schematype should be an array here
-  	service: [String],
-    dateReleased: Number,
-    description: String,
-  	// if user watched it or not
-  	watched: Boolean
+const User = new mongoose.Schema({
+    username: String,
+  // this will be altered when passport registers user, will be salted and hashed
+    password: String,
+  // array of documents containing watchlists from that specific user
+    watchlists: [Watchlist],
 });
+// passport js will be implemented into user schema for secure user authentication
+User.plugin(passportLocalMongoose);
 ```
 
 ## Wireframes
@@ -98,27 +114,50 @@ const Movie = new mongoose.Schema({
 
 (___TODO__: the research topics that you're planning on working on along with their point values... and the total points of research topics listed_)
 
-* (5 points) react.js
-    * There are not many dynamic elements i could think of in this project so far, but it may improve how the UI looks and modernization.
-    * For example, when viewing the list of content, instead of going to a new page, I could use the virtual DOM to expand and show information about a specific movie/film.
-* (2 points) Bootstrap:
+* (5 points) __TODO__ react.js (???)
+    * Will be mainly used to make the UI more presentable 
+    
+* (2 points) __TODO__  Bootstrap (???):
     * To be used along with react.
-* (3 points) The several APIs needed to scrape content from all the services:
-    * https://api.watchmode.com
-    * There are several ways I could go about this:
-        * When user enters the title, the server could make an API call each time seeing if the title exists anywhere.
-        * Or when the server starts, perform API calls asking for all shows/movies from everywhere and create a database containing all the titles from all the services (or maybe just every 24 hours as the content is likely to stay the same). Then when user searches, it just does .find on the database. This is probably much faster as all the data is cached on the server and no API calls to external servers have to be made when user searches for anything
-        * (this API also has limited amount of calls on a free acount).
-            * This method would also doesn't need exact matching if it searches the database.
-* (1 points) Imdb-api to use for descriptions:
-    * https://www.npmjs.com/package/imdb-api
+    
+* (3 points) Middleware used for secure authentication
+    
+    * Passport JS, Passport Mongoose, Connect-Ensure-Login
+    
+        * Will use passport local strategy to implement user registration/login.
+    
+        * passport local mongoose will be used to implement register directly within the User schema, as well as salting and hashing the password
+    
+        * Will authenticate requests anytime a user goes to any page on the server, prevent any data manipulation/retrieval in places where it's not allowed, and will verify the user is logged in via connect-ensure-login
+    
+            
+    
+* (3 points) API to retrieve content data and then parse:
+    * https://github.com/lufinkey/node-justwatch-api
+    * Commercial API but can be used for educational purposes
+    * When user searches for content within their watchlist, an async call to the api is made and searches up for that query. The data is returned in a json and very dense so it will be parsed and clean, scan for where each content is on which service, and then returns an array of objects containing all the movies in a readable manner, which will be added to the db if the user decides too.
+    * The user is able to add any of the content that is displayed using the Add hyperlink
+
+    
 
 
 
-9 points total out of 8 required points
+13 points total out of 8 required points
 
 
 ## [Link to Initial Main Project File](app.js) 
 
 ## Annotations / References Used
+
+https://github.com/jaredhanson/passport
+
+https://github.com/jaredhanson/passport-local
+
+https://github.com/saintedlama/passport-local-mongoose
+
+https://github.com/jaredhanson/connect-ensure-login
+
+https://github.com/lufinkey/node-justwatch-api
+
+https://www.mongodb.com/developer/how-to/use-atlas-on-heroku/
 
