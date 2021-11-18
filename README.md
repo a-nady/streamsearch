@@ -1,4 +1,4 @@
-StreamList*
+**StreamList**
 
 ## Overview
 
@@ -123,20 +123,24 @@ User.plugin(passportLocalMongoose);
 * (3 points) Middleware used for secure authentication
     
     * Passport JS, Passport Mongoose, Connect-Ensure-Login
-    
         * Will use passport local strategy to implement user registration/login.
-    
         * passport local mongoose will be used to implement register directly within the User schema, as well as salting and hashing the password
-    
         * Will authenticate requests anytime a user goes to any page on the server, prevent any data manipulation/retrieval in places where it's not allowed, and will verify the user is logged in via connect-ensure-login
     
-            
+* (1 points) Dynamic routing and url building:
+    
+    * use express dynamic routing for developing more coherent and clear URLs for both the user and developer. Useful here since queries, watchlist names, movies, can vary between user to user.
     
 * (3 points) API to retrieve content data and then parse:
     * https://github.com/lufinkey/node-justwatch-api
+
     * Commercial API but can be used for educational purposes
+
     * When user searches for content within their watchlist, an async call to the api is made and searches up for that query. The data is returned in a json and very dense so it will be parsed and clean, scan for where each content is on which service, and then returns an array of objects containing all the movies in a readable manner, which will be added to the db if the user decides too.
+
     * The user is able to add any of the content that is displayed using the Add hyperlink
+
+        The user is able to add any of the content that is displayed using the
 
     
 
@@ -161,3 +165,4 @@ https://github.com/lufinkey/node-justwatch-api
 
 https://www.mongodb.com/developer/how-to/use-atlas-on-heroku/
 
+https://dev.to/reiallenramos/create-an-express-api-static-and-dynamic-routes-33lb
