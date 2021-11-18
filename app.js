@@ -140,67 +140,68 @@ app.get("/dashboard/:wlist/search/:query", ensure.ensureLoggedIn(), function (re
 );
 
 app.get("/dashboard/add/:index", ensure.ensureLoggedIn(), async function (req, res) {
-    let mov = req.session.passport.user.results[req.params.index];
-    // didnt do this during searching to prevent too many api requests
-    let desc = await jw.getDesc(mov.type, mov.id);
-    Watchlist.findOne(
-        {
-            user: req.session.passport.user.username,
-            name: req.session.passport.user.currlist,
-        },
-        function (err, watch) {
-            if (err) {
-                console.log(err);
-                errorFlag = "An error occured";
-                return res.redirect("/dashboard");
-            }
-            Movie.findOne({ id: mov.id, wl_id: watch._id }, function (err, exists) {
+        let mov = req.session.passport.user.results[req.params.index];
+        // didnt do this during searching to prevent too many api requests
+        let desc = await jw.getDesc(mov.type, mov.id);
+        Watchlist.findOne(
+            {
+                user: req.session.passport.user.username,
+                name: req.session.passport.user.currlist,
+            },
+            function (err, watch) {
                 if (err) {
                     console.log(err);
                     errorFlag = "An error occured";
-                } else if (exists) {
-                    console.log(exists);
-                    errorFlag = "Movie is already in this list.";
-                } else {
-                    new Movie({
-                        wl_id: watch._id,
-                        id: mov.id,
-                        title: mov.title,
-                        release: mov.release,
-                        type: mov.type,
-                        services: mov.services.slice(),
-                        description: desc,
-                        watched: false
-                    }).save(function (err, newMov) {
-                        if (err) {
-                            console.log(err);
-                        }
-                        Watchlist.findOneAndUpdate(
-                            {
-                                user: req.session.passport.user.username,
-                                name: req.session.passport.user.currlist,
-                            },
-                            {
-                                $push: {
-                                    movies: newMov,
-                                },
-                            },
-                            function (err, doc) {
-                                if (err) {
-                                    console.log(err);
-                                }
-                            }
-                        );
-                        successFlag = newMov.title + " successfully added";
-                    });
+                    return res.redirect("/dashboard");
                 }
-            });
-        }
-    );
-    res.redirect("/dashboard/" + req.session.passport.user.currlist);
-    delete req.session.passport.user.currlist
-    delete req.session.passport.user.results
-});
+                Movie.findOne({ id: mov.id, wl_id: watch._id }, function (err, exists) {
+                    if (err) {
+                        console.log(err);
+                        errorFlag = "An error occured";
+                    } else if (exists) {
+                        console.log(exists);
+                        errorFlag = "Movie is already in this list.";
+                    } else {
+                        new Movie({
+                            wl_id: watch._id,
+                            id: mov.id,
+                            title: mov.title,
+                            release: mov.release,
+                            type: mov.type,
+                            services: mov.services.slice(),
+                            description: desc,
+                            watched: false,
+                        }).save(function (err, newMov) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            Watchlist.findOneAndUpdate(
+                                {
+                                    user: req.session.passport.user.username,
+                                    name: req.session.passport.user.currlist,
+                                },
+                                {
+                                    $push: {
+                                        movies: newMov,
+                                    },
+                                },
+                                function (err, doc) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+                                }
+                            );
+                            successFlag = newMov.title + " successfully added";
+                        });
+                    }
+                });
+            }
+        );
+        res.redirect("/dashboard/" + req.session.passport.user.currlist);
+        delete req.session.passport.user.currlist;
+        delete req.session.passport.user.results;
+    }
+);
 
 app.get("/logout", ensure.ensureLoggedIn(), function (req, res) {
     req.logout();
