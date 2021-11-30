@@ -62,7 +62,7 @@ function Movies(props) {
                                             <td>{capitalize(obj.type)}</td>
                                             <td style={{width:'40%'}}>{obj.description}</td>
 
-                                            <td>
+                                            <td style={{width:'25%'}}>
                                                 <ul className="list-style-type:none" style={{listStyleType: 'none', paddingLeft:0, listStylePosition: 'outside'}}>
                                                 {obj.services.map((service) =>(
                                                     <li className="mt-25">

@@ -61,6 +61,8 @@ app.get("/", (req, res) => {
     }
 });
 
+
+
 app.get("/login", (req, res) => {
     if (req.user) {
         res.redirect("/dashboard");
@@ -102,9 +104,6 @@ app.get("/dashboard", ensure.ensureLoggedIn(), function (req, res) {
 
 app.get("/dashboard/:wlist", ensure.ensureLoggedIn(), function (req, res) {
     req.session.passport.user.currlist = req.params.wlist;
-    //console.log(req.session.passport)
-    //console.log(req.session.passport.user.username)
-    //console.log(req.params.wlist)
     Watchlist.findOne(
         { user: req.session.passport.user.username, name: req.params.wlist },
         function (err, watch) {
@@ -130,8 +129,9 @@ app.get("/dashboard/:wlist", ensure.ensureLoggedIn(), function (req, res) {
     );
 });
 
-app.get("/dashboard/:wlist/search/:query", ensure.ensureLoggedIn(), function (req, res) {
-        res.render("results", {
+app.get("/dashboard/:wlist/search/:query", ensure.ensureLoggedIn(), async function (req, res) {
+    req.session.passport.user.results = await jw.search(req.params.query);
+    res.render("results", {
             error: errorFlag,
             list: req.session.passport.user.results,
         });
@@ -208,6 +208,17 @@ app.get("/search", (req, res) => {
         res.render("search", { loggedIn: false });
     }
 });
+
+app.get("/search/:query", async function (req, res) {
+    req.session.results = await jw.search(req.params.query);
+    res.render("guestresults", {
+        loggedIn: (req.user ? true : false),
+        error: errorFlag,
+        list: req.session.results,
+    });
+    req.session.results = []
+});
+
 app.get("/logout", ensure.ensureLoggedIn(), function (req, res) {
     req.logout();
     res.redirect("/");
@@ -299,12 +310,25 @@ app.post("/dashboard", function (req, res) {
     res.redirect("/dashboard");
 });
 
-app.post("/dashboard/:wlist", async function (req, res) {
-    req.session.passport.user.results = await jw.search(req.body.query);
+app.post("/dashboard/:wlist", function (req, res) {
     res.redirect(
         path.join(req.session.passport.user.currlist, "search", req.body.query)
     );
 });
+
+app.post("/search", function (req, res) {
+    res.redirect(
+        path.join("search", req.body.query)
+    );
+});
+
+app.post("/search/:query", function (req, res) {
+    res.redirect("/search/:" + req.body.query);
+});
+
+app.get("/*", (req, res) => {
+    res.send('test')
+})
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
