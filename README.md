@@ -102,56 +102,58 @@ User.plugin(passportLocalMongoose);
 (___TODO__: write out how your application will be used through [user stories](http://en.wikipedia.org/wiki/User_story#Format) and / or [use cases](https://www.mongodb.com/download-center?jmp=docs&_ga=1.47552679.1838903181.1489282706#previous)_)
 
 1. as non-registered user, I can register a new account with the site
-2. as a user, I can log in to the site
-3. as a user, I can create a watchlist
-4. as a user, I can view all of the content I've added in a single list
-5. as a user, I can add content to an existing watchlist
-6. as a user, I can remove content off a watchlist
-7. as a user, I can remove a watchlist
-8. as a user, i can select any content within the list to see more information about it.
+
+2. as non-registered user, I can search for any content I'd like to see and which service it's on
+
+3. as a user, I can log in to the site
+
+4. as a user, I can create a watchlist
+
+5. as a user, I can view all of the content I've added in a single list
+
+6. as a user, I can add content to an existing watchlist
+
+7. as a user, I can remove content off a watchlist
+
+8. as a user, I can remove a watchlist
+
+   
 
 ## Research Topics
 
-(___TODO__: the research topics that you're planning on working on along with their point values... and the total points of research topics listed_)
-
-* (5 points) __TODO__ react.js (???)
-    * Will be mainly used to make the UI more presentable 
+* (3 points) express-react-views
+    * https://github.com/reactjs/express-react-views
+    * I initially chose React as one of my research topics, but I already built a large portion of my project in hbs and handlebars by the time I got to researching and learning react, but I still wanted to get familiar with it and incorporate it without redoing my entire project from server side to client side.
+    *  Express-react-views provides a nice middle ground as I get to grasp some aspects and syntax on how React components interact on the frontend,props, and how data is expressed vs. traditional handlebars while not having to completely change my backend. You can also add other functions within the .jsx files to modify parts of the frontend while it was not possible with hbs.
+    * The downside is express-react-views only works for statically rendered components so it can't mount on the client-side and it doesn't behave as a traditional react app
     
-* (2 points) __TODO__  Bootstrap (???):
-    * To be used along with react.
-    
+* (2 points) Bootstrap CSS (2pts):
+    * To achieve a more modern looking website, bootstrap icons were also used in certain places to improve aesthetics.
 * (3 points) Middleware used for secure authentication
-    
+
     * Passport JS, Passport Mongoose, Connect-Ensure-Login
         * Will use passport local strategy to implement user registration/login.
         * passport local mongoose will be used to implement register directly within the User schema, as well as salting and hashing the password
         * Will authenticate requests anytime a user goes to any page on the server, prevent any data manipulation/retrieval in places where it's not allowed, and will verify the user is logged in via connect-ensure-login
-    
 * (1 points) Dynamic routing and url building:
-    
+
     * use express dynamic routing for developing more coherent and clear URLs for both the user and developer. Useful here since queries, watchlist names, movies, can vary between user to user.
-    
 * (3 points) API to retrieve content data and then parse:
     * https://github.com/lufinkey/node-justwatch-api
-
     * Commercial API but can be used for educational purposes
-
-    * When user searches for content within their watchlist, an async call to the api is made and searches up for that query. The data is returned in a json and very dense so it will be parsed and clean, scan for where each content is on which service, and then returns an array of objects containing all the movies in a readable manner, which will be added to the db if the user decides too.
-
+    * When user searches for content within their watchlist, an async call to the api is made and searches up for that query. The data is returned in a json and very dense so it will be parsed and clean by my own function, scan for where each content is on which service, and then returns an array of objects containing all the movies in a readable manner, which will be added to the db if the user decides too.
     * The user is able to add any of the content that is displayed using the Add hyperlink
-
-        The user is able to add any of the content that is displayed using the
-
-    
+    * Api call to get description of the content will be made if user adds the content. 
 
 
-
-13 points total out of 8 required points
+12 points total out of 8 required points
 
 
 ## [Link to Initial Main Project File](app.js) 
 
 ## Annotations / References Used
+
+https://github.com/reactjs/express-react-views
 
 https://github.com/jaredhanson/passport
 
