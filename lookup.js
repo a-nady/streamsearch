@@ -24,10 +24,10 @@ function parse(data, prov) {
             j++;
             return;
         }
-
+        // remove duplicates
         tempMov.services = [...new Set(tempMov.services)];
 
-        for (var i = 0; i < tempMov.services.length; i++) {
+        for (let i = 0; i < tempMov.services.length; i++) {
             prov.forEach(function (service) {
                 if (service.id === tempMov.services[i]) {
                     tempMov.services[i] = service.clear_name;

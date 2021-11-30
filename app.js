@@ -13,6 +13,7 @@ const User = mongoose.model("User");
 const Watchlist = mongoose.model("Watchlist");
 const Movie = mongoose.model("Movie");
 const uri = process.env.MONGODB_URI;
+const reactViews = require('express-react-views');
 
 if (uri !== undefined) {
     mongoose.connect(uri);
@@ -36,8 +37,10 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.set("view engine", "hbs");
-app.set("views", path.join(__dirname, "/views"));
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jsx');
+app.engine('jsx', reactViews.createEngine());
+app.use(express.static(path.join(__dirname, 'public')));
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(function (user, done) {
@@ -62,12 +65,8 @@ app.get("/login", (req, res) => {
     if (req.user) {
         res.redirect("/dashboard");
     } else {
-        if (errorFlag === "") {
-            res.render("login");
-        } else {
-            res.render("login", { error: errorFlag });
-            errorFlag = "";
-        }
+        res.render("login", { error: errorFlag });
+        errorFlag = "";
     }
 });
 
@@ -89,7 +88,6 @@ app.get("/dashboard", ensure.ensureLoggedIn(), function (req, res) {
         { user: req.session.passport.user.username },
         function (err, watch) {
             res.render("dashboard", {
-                user: 1,
                 error: errorFlag,
                 success: successFlag,
                 list: watch,
@@ -97,11 +95,16 @@ app.get("/dashboard", ensure.ensureLoggedIn(), function (req, res) {
             errorFlag = "";
             successFlag = "";
         }
-    );
+    ).sort({
+        updatedAt: -1 //Sort by Date Added DESC
+    });
 });
 
 app.get("/dashboard/:wlist", ensure.ensureLoggedIn(), function (req, res) {
     req.session.passport.user.currlist = req.params.wlist;
+    //console.log(req.session.passport)
+    //console.log(req.session.passport.user.username)
+    //console.log(req.params.wlist)
     Watchlist.findOne(
         { user: req.session.passport.user.username, name: req.params.wlist },
         function (err, watch) {
@@ -117,9 +120,6 @@ app.get("/dashboard/:wlist", ensure.ensureLoggedIn(), function (req, res) {
                     return res.redirect("/dashboard");
                 }
                 res.render("movies", {
-                    user: 1,
-                    error: errorFlag,
-                    success: successFlag,
                     wlistName: watch.name,
                     list: movs,
                 });
@@ -132,7 +132,6 @@ app.get("/dashboard/:wlist", ensure.ensureLoggedIn(), function (req, res) {
 
 app.get("/dashboard/:wlist/search/:query", ensure.ensureLoggedIn(), function (req, res) {
         res.render("results", {
-            user: 1,
             error: errorFlag,
             list: req.session.passport.user.results,
         });
@@ -159,7 +158,6 @@ app.get("/dashboard/add/:index", ensure.ensureLoggedIn(), async function (req, r
                         console.log(err);
                         errorFlag = "An error occured";
                     } else if (exists) {
-                        console.log(exists);
                         errorFlag = "Movie is already in this list.";
                     } else {
                         new Movie({
@@ -203,6 +201,13 @@ app.get("/dashboard/add/:index", ensure.ensureLoggedIn(), async function (req, r
     }
 );
 
+app.get("/search", (req, res) => {
+    if (req.user) {
+        res.render("search", { loggedIn: true})
+    } else {
+        res.render("search", { loggedIn: false });
+    }
+});
 app.get("/logout", ensure.ensureLoggedIn(), function (req, res) {
     req.logout();
     res.redirect("/");
