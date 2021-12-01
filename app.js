@@ -89,6 +89,12 @@ app.get("/dashboard", ensure.ensureLoggedIn(), function (req, res) {
     Watchlist.find(
         { user: req.session.passport.user.username },
         function (err, watch) {
+            if (err) {
+                console.log(err);
+                errorFlag = "An error occured";
+                req.logout()
+                return res.redirect("/login");
+            }
             res.render("dashboard", {
                 error: errorFlag,
                 success: successFlag,
@@ -154,60 +160,114 @@ app.get("/dashboard/add/:index", ensure.ensureLoggedIn(), async function (req, r
                 if (err) {
                     console.log(err);
                     errorFlag = "An error occured";
-                    return res.redirect("/dashboard");
-                }
-                Movie.findOne({ id: mov.id, wl_id: watch._id }, function (err, exists) {
-                    if (err) {
-                        console.log(err);
-                        errorFlag = "An error occured";
-                    } else if (exists) {
-                        errorFlag = "Movie is already in this list.";
-                    } else {
-                        new Movie({
-                            wl_id: watch._id,
-                            id: mov.id,
-                            title: mov.title,
-                            release: mov.release,
-                            type: mov.type,
-                            services: mov.services.slice(),
-                            description: desc,
-                            actors: actors.slice(),
-                            watched: false,
-                        }).save(function (err, newMov) {
-                            if (err) {
-                                console.log(err);
-                            }
-                            Watchlist.findOneAndUpdate(
-                                {
-                                    user: req.session.passport.user.username,
-                                    name: req.session.passport.user.currlist,
-                                },
-                                {
-                                    $push: {
-                                        movies: newMov,
-                                    },
-                                },
-                                function (err, doc) {
-                                    if (err) {
-                                        console.log(err);
-                                    }
+                    res.redirect("/dashboard");
+                } else if (watch === null) {
+                    errorFlag = "Something werid happened";
+                    res.redirect("/dashboard");
+                } else {
+                    Movie.findOne({id: mov.id, wl_id: watch._id}, function (err, exists) {
+                        if (err) {
+                            console.log(err);
+                            errorFlag = "An error occured";
+                        } else if (exists) {
+                            errorFlag = "Movie is already in this list.";
+                        } else {
+                            new Movie({
+                                wl_id: watch._id,
+                                id: mov.id,
+                                title: mov.title,
+                                release: mov.release,
+                                type: mov.type,
+                                services: mov.services.slice(),
+                                description: desc,
+                                actors: actors.slice(),
+                                watched: false,
+                            }).save(function (err, newMov) {
+                                if (err) {
+                                    console.log(err);
                                 }
-                            );
-                            successFlag = newMov.title + " successfully added";
-                        });
-                    }
-                });
+                                Watchlist.findOneAndUpdate(
+                                    {
+                                        user: req.session.passport.user.username,
+                                        name: req.session.passport.user.currlist,
+                                    },
+                                    {
+                                        $push: {
+                                            movies: newMov,
+                                        },
+                                    },
+                                    function (err, doc) {
+                                        if (err) {
+                                            console.log(err);
+                                        }
+                                    }
+                                );
+                                successFlag = newMov.title + " successfully added";
+                                res.redirect("/dashboard/" + req.session.passport.user.currlist);
+                                delete req.session.passport.user.currlist;
+                                delete req.session.passport.user.results;
+                            });
+                        }
+                    });
+                }
             }
         );
-        res.redirect("/dashboard/" + req.session.passport.user.currlist);
-        delete req.session.passport.user.currlist;
-        delete req.session.passport.user.results;
     }
 );
 
-app.get("/dashboard/:wList/remove/:id", (req, res) => {
-    removeContent(req.session.passport.user.username, req.params.wList, req.params.id);
-    res.redirect("/dashboard/" + req.params.wList)
+app.get("/dashboard/remove/:wList", ensure.ensureLoggedIn(), (req, res) => {
+    Watchlist.findOneAndRemove(
+        {
+            user: req.session.passport.user.username,
+            name: req.params.wList,
+        },
+        function (err, watch) {
+            if (err) {
+                console.log(err);
+                errorFlag = "An error occured";
+                res.redirect("/dashboard");
+            } else if (watch === null) {
+                errorFlag = "Something werid happened";
+                res.redirect("/dashboard");
+            } else {
+                Movie.find({wl_id: watch._id}, function(err, docs){
+                    docs.forEach(function(doc) {
+                        Movie.findOneAndRemove({_id: doc._id}, function(err, mov) {
+                            if (err) {
+                                console.log(err)
+                            }
+                        })
+                    })
+                })
+                successFlag = watch.name + " removed."
+                res.redirect("/dashboard")
+            }
+        }
+    );
+});
+
+app.get("/dashboard/:wList/remove/:id", ensure.ensureLoggedIn(), (req, res) => {
+    Watchlist.findOne(
+        {
+            user: req.session.passport.user.username,
+            name: req.params.wList,
+        },
+        function (err, watch) {
+            if (err) {
+                errorFlag = "An error occured";
+                res.redirect("/dashboard");
+            } else if (watch === null) {
+                errorFlag = "Something werid happened";
+                res.redirect("/dashboard");
+            } else {
+                Movie.findOneAndRemove({id: req.params.id, wl_id: watch._id}, function (err, doc) {
+                    successFlag = doc.title + " removed."
+                    res.redirect("/dashboard/" + req.params.wList)
+                })
+            }
+        }
+    );
+
 });
 
 app.get("/search", (req, res) => {
@@ -294,6 +354,7 @@ app.post("/dashboard", function (req, res) {
                     name: watchlist,
                     movies: [],
                 }).save(function (err, newlist) {
+
                     if (err) {
                         console.log(err);
                     }
@@ -307,6 +368,7 @@ app.post("/dashboard", function (req, res) {
                             },
                         },
                         function (err, doc) {
+
                             if (err) {
                                 console.log(err);
                             }
@@ -340,9 +402,6 @@ app.get("/*", (req, res) => {
     res.send('yo yo ma')
 })
 
-function removeContent(user,wList, movId) {
-
-}
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server started on port ${port}.`);
