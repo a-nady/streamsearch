@@ -19,13 +19,11 @@ class Layout extends React.Component {
             </head>
             <body style={{
                 background: 'linear-gradient(to right, #430089, #82ffa1)',
+                width: '100%',
                 height: '100%',
-                overflow: 'auto',
-                margin: '0px',
-                paddingTop: 0,
-                paddingRight: 0,
-                paddingBottom: 0,
-                paddingLeft: 0,
+                marginTop: 0,
+                zIndex: 1,
+                overflow: 'hidden',
             }}>
             {this.props.children}
             </body>
