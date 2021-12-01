@@ -113,24 +113,29 @@ app.get("/dashboard/:wlist", ensure.ensureLoggedIn(), function (req, res) {
         function (err, watch) {
             if (err) {
                 console.log(err);
-                errorFlag = "An error occured";
-                return res.redirect("/dashboard");
-            }
-            Movie.find({ wl_id: watch._id }, function (err, movs) {
-                if (err) {
-                    console.log(err);
-                    errorFlag = "An error occured";
-                    return res.redirect("/dashboard");
-                }
-                res.render("movies", {
-                    error: errorFlag,
-                    success: successFlag,
-                    wlistName: watch.name,
-                    list: movs,
+                errorFlag = "An error occured.";
+                res.redirect("/dashboard");
+            } else if (watch === null) {
+                errorFlag = "Something weird happened.";
+                res.redirect("/dashboard");
+            } else {
+                Movie.find({wl_id: watch._id}, function (err, movs) {
+                    if (err) {
+                        console.log(err);
+                        errorFlag = "An error occured.";
+                        res.redirect("/dashboard");
+                    } else {
+                        res.render("movies", {
+                            error: errorFlag,
+                            success: successFlag,
+                            wlistName: watch.name,
+                            list: movs,
+                        });
+                        errorFlag = "";
+                        successFlag = "";
+                    }
                 });
-                errorFlag = "";
-                successFlag = "";
-            });
+            }
         }
     );
 });
@@ -156,10 +161,10 @@ app.get("/dashboard/add/:index", ensure.ensureLoggedIn(), async function (req, r
             function (err, watch) {
                 if (err) {
                     console.log(err);
-                    errorFlag = "An error occured";
+                    errorFlag = "An error occured.";
                     res.redirect("/dashboard");
                 } else if (watch === null) {
-                    errorFlag = "Something werid happened";
+                    errorFlag = "Something wierd happened.";
                     res.redirect("/dashboard");
                 } else {
                     Movie.findOne(
@@ -167,7 +172,7 @@ app.get("/dashboard/add/:index", ensure.ensureLoggedIn(), async function (req, r
                         function (err, exists) {
                             if (err) {
                                 console.log(err);
-                                errorFlag = "An error occured";
+                                errorFlag = "An error occured.";
                                 res.redirect("/dashboard/");
                             } else if (exists) {
                                 res.redirect(
@@ -205,7 +210,7 @@ app.get("/dashboard/add/:index", ensure.ensureLoggedIn(), async function (req, r
                                             }
                                         }
                                     );
-                                    successFlag = newMov.title + " successfully added";
+                                    successFlag = newMov.title + " successfully added.";
                                     res.redirect(
                                         "/dashboard/" + req.session.passport.user.currlist
                                     );
@@ -230,10 +235,10 @@ app.get("/dashboard/remove/:wList", ensure.ensureLoggedIn(), (req, res) => {
         function (err, watch) {
             if (err) {
                 console.log(err);
-                errorFlag = "An error occured";
+                errorFlag = "An error occured.";
                 res.redirect("/dashboard");
             } else if (watch === null) {
-                errorFlag = "Something werid happened";
+                errorFlag = "Something weird happened.";
                 res.redirect("/dashboard");
             } else {
                 Movie.find({ wl_id: watch._id }, function (err, docs) {
@@ -260,10 +265,10 @@ app.get("/dashboard/:wList/remove/:id", ensure.ensureLoggedIn(), (req, res) => {
         },
         function (err, watch) {
             if (err) {
-                errorFlag = "An error occured";
+                errorFlag = "An error occured.";
                 res.redirect("/dashboard");
             } else if (watch === null) {
-                errorFlag = "Something werid happened";
+                errorFlag = "Something weird happened.";
                 res.redirect("/dashboard");
             } else {
                 Movie.findOneAndRemove(
