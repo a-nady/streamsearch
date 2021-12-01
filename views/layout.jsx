@@ -7,7 +7,10 @@ class Layout extends React.Component {
     }
     render() {
         return (
-            <html lang="en">
+            <html lang="en" style={{
+                margin: 0,
+                height: '100%',
+            }}>
             <head>
                 <title>StreamSearch</title>
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity=""
@@ -18,12 +21,9 @@ class Layout extends React.Component {
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui"/>
             </head>
             <body style={{
-                background: 'linear-gradient(to right, #430089, #82ffa1)',
-                width: '100%',
+                margin: 0,
                 height: '100%',
-                marginTop: 0,
-                zIndex: 1,
-                overflow: 'hidden',
+                background: 'linear-gradient(to right, #430089, #82ffa1)',
             }}>
             {this.props.children}
             </body>
