@@ -119,6 +119,8 @@ app.get("/dashboard/:wlist", ensure.ensureLoggedIn(), function (req, res) {
                     return res.redirect("/dashboard");
                 }
                 res.render("movies", {
+                    error: errorFlag,
+                    success: successFlag,
                     wlistName: watch.name,
                     list: movs,
                 });
@@ -141,7 +143,8 @@ app.get("/dashboard/:wlist/search/:query", ensure.ensureLoggedIn(), async functi
 app.get("/dashboard/add/:index", ensure.ensureLoggedIn(), async function (req, res) {
         let mov = req.session.passport.user.results[req.params.index];
         // didnt do this during searching to prevent too many api requests
-        let desc = await jw.getDesc(mov.type, mov.id);
+        let info = await jw.getDesc(mov.type, mov.id);
+        let [actors, desc] = info
         Watchlist.findOne(
             {
                 user: req.session.passport.user.username,
@@ -168,6 +171,7 @@ app.get("/dashboard/add/:index", ensure.ensureLoggedIn(), async function (req, r
                             type: mov.type,
                             services: mov.services.slice(),
                             description: desc,
+                            actors: actors.slice(),
                             watched: false,
                         }).save(function (err, newMov) {
                             if (err) {
@@ -201,6 +205,11 @@ app.get("/dashboard/add/:index", ensure.ensureLoggedIn(), async function (req, r
     }
 );
 
+app.get("/dashboard/:wList/remove/:id", (req, res) => {
+    removeContent(req.session.passport.user.username, req.params.wList, req.params.id);
+    res.redirect("/dashboard/" + req.params.wList)
+});
+
 app.get("/search", (req, res) => {
     if (req.user) {
         res.render("search", { loggedIn: true})
@@ -223,6 +232,7 @@ app.get("/logout", ensure.ensureLoggedIn(), function (req, res) {
     req.logout();
     res.redirect("/");
 });
+
 
 app.post("/register", function (req, res) {
     username = req.body.username;
@@ -327,9 +337,12 @@ app.post("/search/:query", function (req, res) {
 });
 
 app.get("/*", (req, res) => {
-    res.send('test')
+    res.send('yo yo ma')
 })
 
+function removeContent(user,wList, movId) {
+
+}
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server started on port ${port}.`);

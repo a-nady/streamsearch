@@ -9,6 +9,7 @@ const Movie = new mongoose.Schema({
     services: [String],
     release: Number,
     description: String,
+    actors: [String],
     watched: Boolean
 });
 

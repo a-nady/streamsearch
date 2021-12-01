@@ -43,6 +43,7 @@ function parse(data, prov) {
         tempMov = {};
         j++;
     });
+
     return results;
 }
 const search = async function (query) {
@@ -53,6 +54,16 @@ const search = async function (query) {
 
 // get description
 const getDesc = async function (type, id) {
+    let actor = []
+    let info = await jw.getTitle(type, id)
+    let i = 0
+    while (actor.length < 3) {
+        if (info.credits[i].role === 'ACTOR' & actor.length < 3) {
+            actor.push(info.credits[i].name)
+        }
+        i++;
+    }
+    return [actor, info.short_description]
     return await jw.getTitle(type, id).then((res) => res.short_description);
 };
 

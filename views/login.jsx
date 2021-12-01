@@ -17,7 +17,7 @@ function Login(props) {
                         <div className="card border-0 shadow rounded-3 my-5">
                             <div className="card-body p-4 p-sm-5">
                                 <h5 className="card-title text-center mb-5 fw-light fs-5">Sign In</h5>
-                                <p className="text-danger" style={{textAlignVertical: "center", textAlign: "center"}}> {props.error} </p>
+                                <p className="text-danger" style={Center}> {props.error} </p>
                                 <form action="/login" method="post">
                                     <div className="form-floating mb-3">
                                         <input type="text" name="username" className="form-control" id="floatingInput"
