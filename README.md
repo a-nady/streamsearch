@@ -1,4 +1,4 @@
-**StreamList**
+**StreamSearcher**
 
 ## Overview
 
@@ -55,6 +55,8 @@ const Movie = new mongoose.Schema({
     release: Number,
   // short description of the content
     description: String,
+  // list of at most 3 actors
+  	actors: [String],
   // pending on if this will be implemented, mark whether its watched or not
     watched: Boolean
 });
