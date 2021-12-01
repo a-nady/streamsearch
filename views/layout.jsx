@@ -18,11 +18,14 @@ class Layout extends React.Component {
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui"/>
             </head>
             <body style={{
-                background:'linear-gradient(to right, #430089, #82ffa1)',
+                background: 'linear-gradient(to right, #430089, #82ffa1)',
                 height: '100%',
                 overflow: 'auto',
-                margin: 0,
-                padding: 0
+                margin: '0px',
+                paddingTop: 0,
+                paddingRight: 0,
+                paddingBottom: 0,
+                paddingLeft: 0,
             }}>
             {this.props.children}
             </body>
