@@ -20,7 +20,9 @@ class Layout extends React.Component {
             <body style={{
                 background:'linear-gradient(to right, #430089, #82ffa1)',
                 height: '100%',
-                overflow: 'auto'
+                overflow: 'auto',
+                margin: 0,
+                padding: 0
             }}>
             {this.props.children}
             </body>
