@@ -53,7 +53,6 @@ function Results(props) {
                                 </tr>
                                 </thead>
                                 <tbody>
-
                                 {props.list.map((obj) => (
                                     <tr>
                                         <>

@@ -7,7 +7,7 @@ function parse(data, prov) {
     prov = prov.filter((obj) => obj.monetization_types.includes("flatrate"));
 
     let tempMov = {};
-    let results = [];
+    const results = [];
     let j = 0;
     data.items.forEach(function (obj) {
         tempMov.title = obj.title;
@@ -48,26 +48,26 @@ function parse(data, prov) {
 }
 const search = async function (query) {
     const providers = await jw.getProviders();
-    let searchResult = await jw.search({ query: query });
+    const searchResult = await jw.search({ query: query });
     return parse(searchResult, providers);
 };
 
 // get description
 const getDesc = async function (type, id) {
-    let actor = []
-    let info = await jw.getTitle(type, id)
-    let i = 0
-    while (actor.length < 3) {
-        if (info.credits[i].role === 'ACTOR' & actor.length < 3) {
-            actor.push(info.credits[i].name)
+    const actor = [];
+    const info = await jw.getTitle(type, id);
+    let i = 0;
+    if (info.credits !== undefined) {
+        while (actor.length < 3 && i < info.credits.length) {
+            if (info.credits[i].role === "ACTOR" && actor.length < 3) {
+                actor.push(info.credits[i].name);
+            }
+            i++;
         }
-        i++;
     }
-    return [actor, info.short_description]
-    return await jw.getTitle(type, id).then((res) => res.short_description);
+    return [actor, info.short_description];
 };
 
-//search()
 module.exports = {
     search: search,
     getDesc: getDesc,

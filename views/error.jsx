@@ -2,10 +2,10 @@ import React from "react";
 const Layout = require('./layout')
 const NavBar = require('./navbar')
 
-function Home(props) {
+function Error(props) {
     return (
     <Layout>
-        {NavBar(false)}
+        {NavBar(props.loggedIn)}
             <div className="site-wrapper">
                 <div className="site-wrapper-inner">
                     <div className="container" style={{
@@ -15,13 +15,12 @@ function Home(props) {
                         color:'white'}}>
                             <br/>
                             <br/>
-                            <h1 className="cover-heading">StreamSearch</h1>
-                            <p className="lead">A one-stop shop for finding content you're subscribed to.</p>
+                            <h1 className="cover-heading">Oops</h1>
+                            <p className="lead">Something wrong happened.</p>
                     </div>
                 </div>
             </div>
         </Layout>
     )
 }
-
-module.exports = Home;
+module.exports = Error;

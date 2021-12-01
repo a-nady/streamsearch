@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const passportLocalMongoose = require("passport-local-mongoose");
 
 const Movie = new mongoose.Schema({
@@ -10,17 +10,19 @@ const Movie = new mongoose.Schema({
     release: Number,
     description: String,
     actors: [String],
-    watched: Boolean
+    watched: Boolean,
 });
 
-const Watchlist = new mongoose.Schema({
-    user : String,
-    name: String,
-    movies: [Movie]
+const Watchlist = new mongoose.Schema(
+    {
+        user: String,
+        name: String,
+        movies: [Movie],
     },
     {
-        timestamps: true
-    });
+        timestamps: true,
+    }
+);
 
 const User = new mongoose.Schema({
     username: String,
@@ -30,7 +32,6 @@ const User = new mongoose.Schema({
 
 User.plugin(passportLocalMongoose);
 
-mongoose.model('User', User);
-mongoose.model('Watchlist', Watchlist);
-mongoose.model('Movie', Movie);
-
+mongoose.model("User", User);
+mongoose.model("Watchlist", Watchlist);
+mongoose.model("Movie", Movie);

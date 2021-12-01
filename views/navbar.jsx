@@ -1,13 +1,5 @@
 import React from 'react'
 
-function isLoggedIn(props) {
-    if (props.user) {
-        return true
-    } else {
-        return false
-    }
-}
-
 function NavBar(state = false) {
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">

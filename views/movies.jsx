@@ -68,7 +68,6 @@ function Movies(props) {
                                 </tr>
                                 </thead>
                                 <tbody>
-
                                 {props.list.map((obj) => (
                                     <tr>
                                         <>
@@ -77,7 +76,6 @@ function Movies(props) {
                                             <td>{obj.release}</td>
                                             <td>{capitalize(obj.type)}</td>
                                             <td style={{width:'50%'}}>{obj.description}</td>
-
                                             <td style={{width:'25%'}}>
                                                 <ul className="list-style-type:none" style={{listStyleType: 'none', paddingLeft:0, listStylePosition: 'outside'}}>
                                                 {obj.services.map((service) =>(

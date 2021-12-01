@@ -15,7 +15,7 @@ function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function Results(props) {
+function GuestResults(props) {
     return (
         <Layout>
             {NavBar(props.loggedIn)}
@@ -49,7 +49,6 @@ function Results(props) {
                                 </tr>
                                 </thead>
                                 <tbody>
-
                                 {props.list.map((obj) => (
                                     <tr>
                                         <>
@@ -84,4 +83,4 @@ function Results(props) {
     )
 }
 
-module.exports = Results
+module.exports = GuestResults
