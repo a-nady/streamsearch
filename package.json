@@ -1,5 +1,5 @@
 {
-  "name": "a-nady-final-project",
+  "name": "streamsearch",
   "version": "1.0.0",
   "description": "StreamList*",
   "main": "app.js",
@@ -33,6 +33,7 @@
     "react-dom": "^16.14.0"
   },
   "engines": {
-    "node": "17.0.1"
-  }
+    "node": "17.2.0"
+  },
+  "devDependencies": {}
 }
